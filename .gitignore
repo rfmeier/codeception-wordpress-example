@@ -2,6 +2,7 @@
 Thumbs.db
 /vendor/
 .env.testing
+composer.lock
 
 tests/_data/*
 tests/_output/*
