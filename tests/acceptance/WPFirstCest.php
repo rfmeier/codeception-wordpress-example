@@ -17,12 +17,12 @@ class WPFirstCest
     {
         $I->loginAsAdmin();
         $I->amOnPluginsPage();
-        $I->see('Sample Plugin');
+        $I->see('Codeception WordPress Example');
 
         $I->amOnPage('https://duckduckgo.com/');
         $I->see('Privacy, simplified.');
 
         $I->amOnPluginsPage();
-        $I->see('Sample Plugin');
+        $I->see('Codeception WordPress Example');
     }
 }

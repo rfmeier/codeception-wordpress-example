@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: Sample Plugin
+ * Plugin Name: Codeception WordPress Example
  * Plugin URI: https://wpengine.com/
  * Description: Sample plugin for testing codeception.
  * Author: WPEngine
  * Author URI: https://wpengine.com/
- * Text Domain: sample-plugin
+ * Text Domain: codeception-wordpress-example
  * Domain Path: /languages
  * Version: 0.0.1
  *
- * @package Sample_Plugin
+ * @package Codeception_WordPress_Example
  */
