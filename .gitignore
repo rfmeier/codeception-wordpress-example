@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+/vendor/
+.env.testing
+
+tests/_data/*
+tests/_output/*
+!tests/_data/.gitkeep
+!tests/_output/.gitkeep
