@@ -1,6 +1,6 @@
 <?php
 
-class WPFirstCest
+class ExampleCest
 {
     public function i_see_hello_world(AcceptanceTester $I)
     {
