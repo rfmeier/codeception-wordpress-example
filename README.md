@@ -31,3 +31,11 @@ After you _think_ you have Codeception configured, you can run the tests.
 ```
 vendor/bin/codecept run acceptance
 ```
+
+## Documentation
+* [Codeception](https://codeception.com/)
+  * [Codeception for WordPress](https://codeception.com/for/wordpress)
+* [WPBrowser](https://wpbrowser.wptestkit.dev/)
+  * [WPBrowser](https://wpbrowser.wptestkit.dev/modules/wpbrowser)
+  * [WPDb](https://wpbrowser.wptestkit.dev/modules/wpdb)
+  
