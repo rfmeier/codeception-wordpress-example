@@ -38,4 +38,4 @@ vendor/bin/codecept run acceptance
 * [WPBrowser](https://wpbrowser.wptestkit.dev/)
   * [WPBrowser](https://wpbrowser.wptestkit.dev/modules/wpbrowser)
   * [WPDb](https://wpbrowser.wptestkit.dev/modules/wpdb)
-  
+  * [WPWebDriver](https://wpbrowser.wptestkit.dev/modules/wpwebdriver)
