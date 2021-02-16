@@ -4,7 +4,10 @@ Thumbs.db
 .env.testing
 composer.lock
 
+bin/*
 tests/_data/*
 tests/_output/*
+
+!bin/.gitkeep
 !tests/_data/.gitkeep
 !tests/_output/.gitkeep
