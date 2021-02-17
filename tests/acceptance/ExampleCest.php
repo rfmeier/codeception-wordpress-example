@@ -43,13 +43,13 @@ class ExampleCest
     {
         $I->loginAsAdmin();
         $I->amOnPluginsPage();
-        $I->see('Codeception WordPress Example');
+        $I->see('Hello Dolly');
 
         $I->amOnUrl('https://duckduckgo.com/');
         $I->see('Tired of being tracked online?');
 
         $I->amOnUrl($this->wordPressUrl);
         $I->amOnPluginsPage();
-        $I->see('Codeception WordPress Example');
+        $I->see('Hello Dolly');
     }
 }
