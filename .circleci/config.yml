@@ -7,7 +7,12 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.4-node-browsers
-
+      - image: circleci/mysql:5.7-ram
+        environment:
+          MYSQL_ROOT_PASSWORD: wordpress
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -20,6 +25,71 @@ jobs:
     steps:
       - checkout
 
+      - run:
+          name: Install mysql_client
+          command: |
+            sudo apt-get install default-mysql-client
+
+      - run:
+          name: Install MySQL PHP extension
+          command: sudo docker-php-ext-install mysqli zip pdo_mysql
+
+      - run:
+          # Our primary container isn't MYSQL so run a sleep command until it's ready.
+          name: Waiting for MySQL to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
+
+      - run:
+          name: Install WP-CLI
+          command: |
+            curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+            chmod +x wp-cli.phar
+            ./wp-cli.phar --info
+
+      - run:
+          name: Download WordPress
+          command: |
+            mkdir /tmp/wordpress
+            ./wp-cli.phar core download  --path=/tmp/wordpress --version=latest
+
+      - run:
+          name: Setup wp-config file
+          command: |
+            ./wp-cli.phar config create --path=/tmp/wordpress --dbname=wordpress --dbuser=root --dbpass=wordpress --dbhost=127.0.0.1:3306 --force --extra-php <<PHP
+            define( 'WP_SITEURL', 'http://localhost:5501' );
+            define( 'WP_HOME', 'http://localhost:5501' );
+            PHP
+
+      - run:
+          name: Install WordPress
+          command: |
+            ./wp-cli.phar core install --path=/tmp/wordpress --url=http://localhost:5501 --title="WPE Headless Testing" --admin_user=admin --admin_password=password --admin_email=admin@example.com --skip-email
+
+      - run:
+          name: Install WPGraphQL
+          command: |
+            ./wp-cli.phar plugin install --path=/tmp/wordpress wp-graphql --activate
+
+      - run:
+          name: Create database dump for Codeception
+          command: |
+            mkdir -p tests/_data
+            ./wp-cli.phar --path=/tmp/wordpress db export tests/_data/dump.sql
+            ls -lah tests/_data/dump.sql
+
+      - run:
+          name: Start php server
+          command: |
+            php -S localhost:5501 -t /tmp/wordpress
+          background: true
+
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "composer.json" }}
@@ -27,7 +97,7 @@ jobs:
 
       - run:
           name: Install composer packages
-          command: composer install --no-interaction --prefer-dist --no-suggest
+          command: composer install --no-interaction --prefer-dist
 
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
@@ -35,25 +105,24 @@ jobs:
             - ./vendor
 
       - run:
-          name: Install Docker Compose
-          command: |
-            set -x
-            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-            chmod +x /usr/local/bin/docker-compose
-
-      - setup_remote_docker
-
-      - run:
-          name: Build the docker containters
-          command: |
-            set -x
-            docker-compose up -d --build
-            sleep 7
-
-      - run:
           name: Setup Codeception files
           command: |
-            cp .env.testing.example .env.testing
+            cp .env.testing.circleci .env.testing
+            cp tests/acceptance.suite.cirleci.yml tests/acceptance.suite.yml
+
+      - run:
+          name: Install Chromedriver
+          command: |
+            curl -O https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip
+            unzip chromedriver_linux64.zip
+            rm chromedriver_linux64.zip
+            mv chromedriver ./bin
+
+      - run:
+          name: Start Chromedriver
+          command: |
+            ./bin/chromedriver --url-base=/wd/hub
+          background: true
 
       - run:
           name: Run Codeception
