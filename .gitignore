@@ -7,7 +7,9 @@ composer.lock
 bin/*
 tests/_data/*
 tests/_output/*
+tests/_support/_generated/*
 
 !bin/.gitkeep
 !tests/_data/.gitkeep
 !tests/_output/.gitkeep
+!tests/_support/_generated/.gitkeep
